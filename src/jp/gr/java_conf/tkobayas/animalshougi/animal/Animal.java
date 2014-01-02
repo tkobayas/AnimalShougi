@@ -1,6 +1,7 @@
 package jp.gr.java_conf.tkobayas.animalshougi.animal;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class Animal {
 	
@@ -9,12 +10,22 @@ public class Animal {
 	private int x;
 	private int y;
 	
+	private ImageView view;
+	
 	public Animal(int player, int x, int y) {
 		this.player = player;
 		this.x = x;
 		this.y = y;
 	}
 	
+	public ImageView getView() {
+		return view;
+	}
+
+	public void setView(ImageView view) {
+		this.view = view;
+	}
+
 	public int getX() {
 		return x;
 	}
