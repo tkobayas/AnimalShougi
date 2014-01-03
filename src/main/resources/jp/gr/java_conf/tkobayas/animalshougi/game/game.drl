@@ -1,0 +1,64 @@
+import jp.gr.java_conf.tkobayas.animalshougi.*
+import jp.gr.java_conf.tkobayas.animalshougi.animal.*
+
+global java.lang.Boolean isValid
+global java.util.List resultList
+
+//------
+
+rule "Chick Move"
+when
+    Action(animal.class == Chick.class && direction == Direction.FORWARD)
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end
+
+rule "Elephant Move"
+when
+    Action(animal.class == Elephant.class && (direction == Direction.FORWARD_LEFT || direction == Direction.FORWARD_RIGHT || direction == Direction.BACKWARD_LEFT || direction == Direction.BACKWARD_RIGHT))
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end
+
+rule "Giraffe Move"
+when
+    Action(animal.class == Giraffe.class && (direction == Direction.FORWARD || direction == Direction.BACKWARD || direction == Direction.LEFT || direction == Direction.RIGHT))
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end
+
+rule "Lion Move"
+when
+    Action(animal.class == Lion.class && direction != Direction.INVALID)
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end
+
+rule "Hen Move"
+when
+    Action(animal.class == Hen.class && (direction == Direction.FORWARD || direction == Direction.BACKWARD || direction == Direction.LEFT || direction == Direction.RIGHT || direction == Direction.FORWARD_LEFT || direction == Direction.FORWARD_RIGHT))
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end
+
+//-----
+
+rule "Collision with friend"
+salience -10
+when
+    $action : Action($animal : animal)
+    $gameBoard : GameBoard()
+    eval($gameBoard.containsFriend($animal.getPlayer(), $action.getNewCol(), $action.getNewRow()))
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(false)); 
+end
+
+rule "Capture foe"
+salience -10
+when
+    $action : Action($animal : animal)
+    $gameBoard : GameBoard()
+    eval($gameBoard.containsFoe($animal.getPlayer(), $action.getNewCol(), $action.getNewRow()))
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end

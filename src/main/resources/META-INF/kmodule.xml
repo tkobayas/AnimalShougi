@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule
+        xmlns="http://jboss.org/kie/6.0.0/kmodule">
+
+  <!--kbase name="defaultKieBase" default="true" eventProcessingMode="cloud" equalsBehavior="identity" declarativeAgenda="disabled" scope="javax.enterprise.context.ApplicationScoped" packages="kmodule">
+    <ksession name="defaultKieSession" type="stateful" default="true" clockType="realtime" scope="javax.enterprise.context.ApplicationScoped"/>
+    <ksession name="defaultStatelessKieSession" type="stateless" default="true" clockType="realtime" scope="javax.enterprise.context.ApplicationScoped"/>
+  </kbase-->
+
+  <kbase name="kbase_rules_of_game" packages="jp.gr.java_conf.tkobayas.animalshougi.game">
+    <ksession name="ksession_rules_of_game"/>
+  </kbase>
+
+  <kbase name="kbase_algorithm" packages="jp.gr.java_conf.tkobayas.animalshougi.algorithm">
+    <ksession name="ksession_algorithm"/>
+  </kbase>
+
+</kmodule>

@@ -1,15 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.5.jar"/>
+	<classpathentry kind="lib" path="lib/bcmail-jdk14-138.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk14-138.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/drools-compiler-6.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="lib/drools-core-6.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/drools-decisiontables-6.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/drools-jsr94-6.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/drools-persistence-jpa-6.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/drools-templates-6.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/drools-verifier-6.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="lib/ecj-3.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/guava-13.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/itext-2.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javassist-3.15.0-GA.jar"/>
+	<classpathentry kind="lib" path="lib/jsr94-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/kie-api-6.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="lib/kie-internal-6.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/mvel2-2.1.8.Final.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.9.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.9.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.9.jar"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.3.04.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/xmlpull-1.1.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
