@@ -7,15 +7,15 @@ public class Animal {
 	
 	private int player;
 
-	private int x;
-	private int y;
+	private int col;
+	private int row;
 	
 	private ImageView view;
 	
-	public Animal(int player, int x, int y) {
+	public Animal(int player, int col, int row) {
 		this.player = player;
-		this.x = x;
-		this.y = y;
+		this.col = col;
+		this.row = row;
 	}
 	
 	public ImageView getView() {
@@ -26,17 +26,17 @@ public class Animal {
 		this.view = view;
 	}
 
-	public int getX() {
-		return x;
+	public int getCol() {
+		return col;
 	}
-	public void setX(int x) {
-		this.x = x;
+	public void setCol(int col) {
+		this.col = col;
 	}
-	public int getY() {
-		return y;
+	public int getRow() {
+		return row;
 	}
-	public void setY(int y) {
-		this.y = y;
+	public void setRow(int row) {
+		this.row = row;
 	}
 
 	public int getPlayer() {
