@@ -1,18 +1,20 @@
-package jp.gr.java_conf.tkobayas.animalshougi;
+package jp.gr.java_conf.tkobayas.animalshougi.action;
 
+import jp.gr.java_conf.tkobayas.animalshougi.Direction;
+import jp.gr.java_conf.tkobayas.animalshougi.Player;
 import jp.gr.java_conf.tkobayas.animalshougi.animal.Animal;
 
-public class Action {
+public class MoveAction implements Action {
 
 	private Animal animal;
 	
 	private int newCol;
 	private int newRow;
 	
-	public Action() {	
+	public MoveAction() {	
 	}
 	
-	public Action(Animal animal, int newCol, int newRow) {
+	public MoveAction(Animal animal, int newCol, int newRow) {
 		this.animal = animal;
 		this.newCol = newCol;
 		this.newRow = newRow;
@@ -39,8 +41,8 @@ public class Action {
 	
 	public Direction getDirection() {
 		
-		int side = (newCol - animal.getCol()) * (animal.getPlayer() == 1 ? +1 : -1);
-		int forword = (animal.getRow() - newRow) * (animal.getPlayer() == 1 ? +1 : -1);
+		int side = (newCol - animal.getCol()) * (animal.getPlayer() == Player.PLAYER1 ? +1 : -1);
+		int forword = (animal.getRow() - newRow) * (animal.getPlayer() == Player.PLAYER2 ? +1 : -1);
 		
 		if (side == 0 && forword == 0) {
 			return Direction.NONE;

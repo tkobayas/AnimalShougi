@@ -2,17 +2,18 @@ package jp.gr.java_conf.tkobayas.animalshougi.animal;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import jp.gr.java_conf.tkobayas.animalshougi.Player;
 
 public class Animal {
 	
-	private int player;
+	private Player player;
 
 	private int col;
 	private int row;
 	
 	private ImageView view;
 	
-	public Animal(int player, int col, int row) {
+	public Animal(Player player, int col, int row) {
 		this.player = player;
 		this.col = col;
 		this.row = row;
@@ -39,10 +40,10 @@ public class Animal {
 		this.row = row;
 	}
 
-	public int getPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
-	public void setPlayer(int player) {
+	public void setPlayer(Player player) {
 		this.player = player;
 	}
 	

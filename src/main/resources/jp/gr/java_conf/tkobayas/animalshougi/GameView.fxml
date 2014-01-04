@@ -21,7 +21,7 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="90.0" />
           </columnConstraints>
           <padding>
-            <Insets />
+            <Insets fx:id="x1" />
           </padding>
           <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -32,10 +32,14 @@
         </GridPane>
       </center>
       <left>
-        <Pane prefHeight="376.0" prefWidth="160.0" />
+        <Pane prefHeight="376.0" prefWidth="160.0">
+          <padding>
+            <Insets fx:id="x1" />
+          </padding>
+        </Pane>
       </left>
       <right>
-        <Pane prefHeight="376.0" prefWidth="160.0" />
+        <Pane padding="$x1" prefHeight="376.0" prefWidth="160.0" />
       </right>
       <top>
         <MenuBar>

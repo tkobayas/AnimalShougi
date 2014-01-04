@@ -3,6 +3,7 @@ package jp.gr.java_conf.tkobayas.animalshougi;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.gr.java_conf.tkobayas.animalshougi.action.MoveAction;
 import jp.gr.java_conf.tkobayas.animalshougi.animal.Animal;
 
 public class GameBoard {
@@ -60,8 +61,12 @@ public class GameBoard {
 		
 		return animals;
 	}
+	
+	public Animal getAnimal(int col, int row) {
+		return grid[col][row];
+	}
 
-	public void update(Action action) {
+	public void update(MoveAction action) {
 		Animal animal = action.getAnimal();
 
 		grid[animal.getCol()][animal.getRow()] = null;
@@ -70,7 +75,7 @@ public class GameBoard {
 		grid[animal.getCol()][animal.getRow()] = animal;
 	}
 	
-	public boolean containsFriend(int player, int col, int row) {
+	public boolean containsFriend(Player player, int col, int row) {
 		Animal animal = grid[col][row];
 		if (animal != null && animal.getPlayer() == player) {
 			return true;
@@ -79,12 +84,26 @@ public class GameBoard {
 		}
 	}
 	
-	public boolean containsFoe(int player, int col, int row) {
+	public boolean containsFoe(Player player, int col, int row) {
 		Animal animal = grid[col][row];
 		if (animal != null && animal.getPlayer() != player) {
 			return true;
 		} else {
 			return false;
+		}
+	}
+	
+	public void captureAnimal(Animal capturedAnimal, Player toPlayer) {
+		grid[capturedAnimal.getCol()][capturedAnimal.getRow()] = null;
+		
+		capturedAnimal.setCol(-1);
+		capturedAnimal.setRow(-1);
+		capturedAnimal.setPlayer(toPlayer);
+		
+		if (toPlayer == Player.PLAYER1) {
+			player1hand.add(capturedAnimal);
+		} else {
+			player2hand.add(capturedAnimal);
 		}
 	}
 }

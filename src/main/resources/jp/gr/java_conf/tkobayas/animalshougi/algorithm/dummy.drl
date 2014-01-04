@@ -1,0 +1,14 @@
+import jp.gr.java_conf.tkobayas.animalshougi.*
+import jp.gr.java_conf.tkobayas.animalshougi.action.*
+import jp.gr.java_conf.tkobayas.animalshougi.animal.*
+
+global MoveAction nextMove
+
+//------
+
+rule "dummy Move"
+when
+	$lion : Lion(player == Player.PLAYER2)
+then
+    drools.getWorkingMemory().setGlobal("nextMove", new MoveAction($lion, 2, 1)); 
+end
