@@ -6,9 +6,26 @@ global MoveAction nextMove
 
 //------
 
-rule "dummy Move"
+rule "dummy Move1"
 when
-	$lion : Lion(player == Player.PLAYER2)
+	$elephant : Elephant(player == Player.PLAYER2, col == 2, row == 0)
 then
-    drools.getWorkingMemory().setGlobal("nextMove", new MoveAction($lion, 2, 1)); 
+    drools.getWorkingMemory().setGlobal("nextMove", new MoveAction($elephant, 1, 1)); 
+end
+
+rule "dummy Move2"
+when
+	$lion : Lion(player == Player.PLAYER2, col == 1, row == 0)
+	$elephant : Elephant(player == Player.PLAYER2, col == 1, row == 1)
+then
+    drools.getWorkingMemory().setGlobal("nextMove", new MoveAction($lion, 2, 0)); 
+end
+
+rule "dummy Move3"
+when
+	$lion : Lion(player == Player.PLAYER2, col == 2, row == 0)
+	$elephant : Elephant(player == Player.PLAYER2, col == 1, row == 1)
+	$giraffe : Giraffe(player == Player.PLAYER2, col == 0, row == 0)
+then
+    drools.getWorkingMemory().setGlobal("nextMove", new MoveAction($giraffe, 1, 0)); 
 end

@@ -42,6 +42,12 @@ then
     drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
 end
 
+rule "Place Animal from hand"
+when
+    MoveAction(animal.col == -1, animal.row == -1)
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true)); 
+end
 //-----
 
 rule "Collision with friend"
@@ -73,6 +79,18 @@ when
     $gameBoard : GameBoard()
     eval($gameBoard.containsFoe($animal.getPlayer(), $action.getNewCol(), $action.getNewRow()))
     eval($gameBoard.getAnimal($action.getNewCol(), $action.getNewRow()).getClass() == Lion.class)
+then
+    drools.getWorkingMemory().setGlobal("isValid", new Boolean(true));
+    resultList.add(new WinAction());
+end
+
+rule "Dummy checkmate"
+salience -20
+when
+	$lion : Lion(player == Player.PLAYER2, col == 2, row == 0)
+	$elephant : Elephant(player == Player.PLAYER2, col == 1, row == 1)
+	$giraffe : Giraffe(player == Player.PLAYER2, col == 1, row == 0)
+	MoveAction(animal.class == Chick.class, newCol == 2, newRow == 1)
 then
     drools.getWorkingMemory().setGlobal("isValid", new Boolean(true));
     resultList.add(new WinAction());

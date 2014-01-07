@@ -6,6 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
@@ -63,5 +64,14 @@
         </MenuBar>
       </top>
     </BorderPane>
+    <Pane layoutX="81.0" layoutY="120.0" prefHeight="200.0" prefWidth="438.0" visible="false">
+      <children>
+        <Text fill="#00ff29" fontSmoothingType="GRAY" layoutX="-3.0" layoutY="122.0" scaleX="0.9869662273383997" scaleY="1.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER1 WIN" textAlignment="CENTER">
+          <font>
+            <Font name="DejaVu Sans Condensed Bold" size="64.0" />
+          </font>
+        </Text>
+      </children>
+    </Pane>
   </children>
 </AnchorPane>

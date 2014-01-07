@@ -32,6 +32,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jp.gr.java_conf.tkobayas.animalshougi.action.Action;
@@ -46,27 +47,28 @@ import jp.gr.java_conf.tkobayas.animalshougi.animal.Giraffe;
 import jp.gr.java_conf.tkobayas.animalshougi.animal.Lion;
 
 public class AnimalShougi extends Application {
-	
+
 	private static final int UNIT_SIZE = 90;
-	
+
 	private GamePhase gamePhase;
-	
+
 	private GameBoard gameBoard;
-	
+
 	// drools
 	KieServices ks;
 	KieContainer kContainer;
-	
+
 	// components
 	BorderPane borderPane;
 	GridPane gridPane;
 	Pane leftPane;
 	Pane rightPane;
 	Label statusLabel;
-	
+	Pane popupPane;
+
 	// drag&drop tips
-    private double initX;
-    private double initY;
+	private double initX;
+	private double initY;
 	private Point2D dragAnchor;
 	private double gridLeft;
 	private double gridTop;
@@ -79,15 +81,15 @@ public class AnimalShougi extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException, URISyntaxException {
-		
+
 		gamePhase = GamePhase.STARTING;
-		
+
 		setupGameBoard();
 
 		setupGameView(stage);
-		
+
 		setupDrools();
-		
+
 		gamePhase = GamePhase.PLAYER1;
 		statusLabel.setText(gamePhase.toString());
 	}
@@ -108,11 +110,12 @@ public class AnimalShougi extends Application {
 		AnchorPane root = FXMLLoader.load(getClass().getResource("GameView.fxml"));
 
 		borderPane = ((BorderPane) root.getChildren().get(0));
+		popupPane = ((Pane) root.getChildren().get(1));
 		gridPane = (GridPane) borderPane.getCenter();
 		leftPane = (Pane) borderPane.getLeft();
 		rightPane = (Pane) borderPane.getRight();
 		statusLabel = (Label) borderPane.getBottom();
-		
+
 		List<Animal> animals = gameBoard.getAllAnimals();
 
 		for (Animal animal : animals) {
@@ -121,25 +124,25 @@ public class AnimalShougi extends Application {
 
 			gridPane.add(view, animal.getCol(), animal.getRow());
 		}
-		
+
 		// to trigger PLAYER2
 		borderPane.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				
+
 				System.out.println(event);
-				
+
 				if (gamePhase != GamePhase.PLAYER2) {
 					event.consume();
 					return;
 				}
-				
+
 				doPlayer2();
-				
+
 				event.consume();
 			}
 		});
-		
+
 		stage.setTitle("Animal Shougi");
 		stage.setScene(new Scene(root));
 		stage.show();
@@ -147,7 +150,7 @@ public class AnimalShougi extends Application {
 		Media media = new Media(getClass().getResource("opening.mp3").toURI().toString());
 		MediaPlayer mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.play();
-		
+
 		gridLeft = gridPane.getLayoutX();
 		gridTop = gridPane.getLayoutY();
 		gridWidth = gridPane.getWidth();
@@ -181,133 +184,148 @@ public class AnimalShougi extends Application {
 		view.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				
+
 				if (gamePhase != GamePhase.PLAYER1) {
 					event.consume();
 					return;
 				}
-				
+
 				System.out.println(event);
 				System.out.println(myAnimal);
-		        initX = view.getTranslateX();
-		        initY = view.getTranslateY();
-		        dragAnchor = new Point2D(event.getSceneX(), event.getSceneY());
+				initX = view.getTranslateX();
+				initY = view.getTranslateY();
+				dragAnchor = new Point2D(event.getSceneX(), event.getSceneY());
 				event.consume();
 			}
 		});
 		view.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				
+
 				if (gamePhase != GamePhase.PLAYER1) {
 					event.consume();
 					return;
 				}
-				
-				//System.out.println(event);
-				//System.out.println(myAnimal);
+
+				// System.out.println(event);
+				// System.out.println(myAnimal);
 				double dragX = event.getSceneX() - dragAnchor.getX();
-		        double dragY = event.getSceneY() - dragAnchor.getY();
-		        //calculate new position of the view
-		        double newXPosition = initX + dragX;
-		        double newYPosition = initY + dragY;
-		        view.setTranslateX(newXPosition);
-		        view.setTranslateY(newYPosition);
+				double dragY = event.getSceneY() - dragAnchor.getY();
+				// calculate new position of the view
+				double newXPosition = initX + dragX;
+				double newYPosition = initY + dragY;
+				view.setTranslateX(newXPosition);
+				view.setTranslateY(newYPosition);
 				event.consume();
 			}
 		});
 		view.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				
+
 				if (gamePhase != GamePhase.PLAYER1) {
 					event.consume();
 					return;
 				}
-				
+
 				System.out.println(event);
 				System.out.println(myAnimal);
-				
+
 				// Do rule
 				doMoveRule(event, view, myAnimal);
-				
+
 				event.consume();
 			}
 		});
-		
+
 		animal.setView(view);
-		
+
 		return view;
 	}
-	
+
 	private void setupDrools() {
-        ks = KieServices.Factory.get();
-        kContainer = ks.getKieClasspathContainer();
-        
-        // for eagar load
-        KieSession kSession = kContainer.newKieSession("ksession_rules_of_game");
-        kSession.dispose();
+		ks = KieServices.Factory.get();
+		kContainer = ks.getKieClasspathContainer();
+
+		// for eagar load
+		KieSession kSession = kContainer.newKieSession("ksession_rules_of_game");
+		kSession.dispose();
 	}
 
 	protected void doMoveRule(MouseEvent event, ImageView view, Animal animal) {
-		int newCol = (int)((event.getSceneX() - gridLeft) / (gridWidth / 3));
-		int newRow = (int)((event.getSceneY() - gridTop) / (gridHeight / 4));
-		
+		int newCol = (int) ((event.getSceneX() - gridLeft) / (gridWidth / 3));
+		int newRow = (int) ((event.getSceneY() - gridTop) / (gridHeight / 4));
+
 		if (newCol < 0 || newCol > 2 || newRow < 0 || newRow > 3) {
 			// invalid
-    		view.setTranslateX(initX);
-    		view.setTranslateY(initY);
-    		return;
+			view.setTranslateX(initX);
+			view.setTranslateY(initY);
+			return;
 		}
-		
+
+		boolean fromHand = (animal.getCol() == -1);
+
 		MoveAction moveAction = new MoveAction(animal, newCol, newRow);
 
 		Boolean isValid = new Boolean(false);
 		List<Action> resultList = new ArrayList<Action>();
-		
-        KieSession kSession = kContainer.newKieSession("ksession_rules_of_game");
 
-        kSession.setGlobal("isValid", isValid);
-        kSession.setGlobal("resultList", resultList);
-        
-        kSession.insert(gameBoard);
-        List<Animal> animals = gameBoard.getAllAnimals();
-        for (Animal ani: animals) {
-        	kSession.insert(ani);
-        }
-        kSession.insert(moveAction);
-        kSession.fireAllRules();
-        
-        isValid = (Boolean)kSession.getGlobal("isValid");
-        
-        kSession.dispose();
-        
-        // doesn't meet the moving rules
-        if (!isValid) {
-    		view.setTranslateX(initX);
-    		view.setTranslateY(initY);
-    		return;
-        }
-		
-        // execute the moving action
-        gameBoard.update(moveAction);
-        
-		gridPane.getChildren().remove(view);
-		view.setTranslateX(initX);
-		view.setTranslateY(initY);
+		KieSession kSession = kContainer.newKieSession("ksession_rules_of_game");
+
+		kSession.setGlobal("isValid", isValid);
+		kSession.setGlobal("resultList", resultList);
+
+		kSession.insert(gameBoard);
+		List<Animal> animals = gameBoard.getAllAnimals();
+		for (Animal ani : animals) {
+			kSession.insert(ani);
+		}
+		kSession.insert(moveAction);
+		kSession.fireAllRules();
+
+		isValid = (Boolean) kSession.getGlobal("isValid");
+
+		kSession.dispose();
+
+		// doesn't meet the moving rules
+		if (!isValid) {
+			view.setTranslateX(initX);
+			view.setTranslateY(initY);
+			return;
+		}
+
+		// execute the moving action
+		gameBoard.update(moveAction);
+
+		if (gridPane.getChildren().contains(view)) {
+			gridPane.getChildren().remove(view);
+		}
+		System.out.println(view);
+		System.out.println(initX + ", " + initY);
+
+		if (fromHand) {
+			view.setTranslateX(0);
+			view.setTranslateY(0);
+		} else {
+			view.setTranslateX(initX);
+			view.setTranslateY(initY);
+		}
 		gridPane.add(view, newCol, newRow);
-        
-        // Any result action (win / capture an animal / grow to a hen)
-        for (Action resultAction : resultList) {
-        	System.out.println(resultAction);
-        	if (resultAction instanceof WinAction) {
-        		// TODO:
-        	} else if (resultAction instanceof CaptureAction) {
-        		Animal capturedAnimal = ((CaptureAction)resultAction).getAnimal();
-        		spinView(capturedAnimal, moveAction.getAnimal().getPlayer());
-        	} else if (resultAction instanceof HenAction) {
-        		// TODO:
-        	}
+
+		// Any result action (win / capture an animal / grow to a hen)
+		for (Action resultAction : resultList) {
+			System.out.println(resultAction);
+			if (resultAction instanceof WinAction) {
+				System.out.println("Win!!");
+				Text text = (Text)popupPane.getChildren().get(0);
+				text.setText("PLAYER1 WIN");
+				popupPane.setVisible(true);
+			} else if (resultAction instanceof CaptureAction) {
+				Animal capturedAnimal = ((CaptureAction) resultAction).getAnimal();
+				spinView(capturedAnimal, moveAction.getAnimal().getPlayer());
+			} else if (resultAction instanceof HenAction) {
+				// TODO:
+			}
 		}
 
 		gamePhase = GamePhase.PLAYER2;
@@ -320,14 +338,14 @@ public class AnimalShougi extends Application {
 		double toY;
 		if (toPlayer == Player.PLAYER1) {
 			toX = (gridWidth - view.getLayoutX()) + 30;
-			toY = (gridHeight - view.getLayoutY()) - (UNIT_SIZE * (gameBoard.getPlayer1hand().size() +1));
+			toY = (gridHeight - view.getLayoutY()) - (UNIT_SIZE * (gameBoard.getPlayer1hand().size() + 1));
 		} else {
-			toX = - view.getLayoutX() - 20 - UNIT_SIZE;
-			toY = - view.getLayoutY() + (UNIT_SIZE * gameBoard.getPlayer2hand().size());
+			toX = 0 - view.getLayoutX() - 20 - UNIT_SIZE;
+			toY = 0 - view.getLayoutY() + (UNIT_SIZE * gameBoard.getPlayer2hand().size());
 		}
 
 		System.out.println("toX = " + toX + ", toY = " + toY);
-		
+
 		TranslateTransition translateTransition = new TranslateTransition();
 		translateTransition.setNode(view);
 		translateTransition.setDuration(Duration.millis(0_500L));
@@ -336,103 +354,109 @@ public class AnimalShougi extends Application {
 		translateTransition.setToX(toX);
 		translateTransition.setToY(toY);
 		translateTransition.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-        		gridPane.getChildren().remove(view);
-        		gameBoard.captureAnimal(capturedAnimal, toPlayer);
-        		ImageView newView = createImageView(capturedAnimal, view.getImage());
-        		if (toPlayer == Player.PLAYER1) {
-        			newView.setTranslateX(30);
-        			newView.setTranslateY(gridHeight - (UNIT_SIZE * gameBoard.getPlayer1hand().size()));
-        			rightPane.getChildren().add(newView);
-        		} else {
-        			newView.setTranslateX(30);
-        			newView.setTranslateY(UNIT_SIZE * gameBoard.getPlayer2hand().size());
-        			leftPane.getChildren().add(newView);
-        		}
-            }
-        });
+			@Override
+			public void handle(ActionEvent event) {
+				gridPane.getChildren().remove(view);
+				gameBoard.captureAnimal(capturedAnimal, toPlayer);
+				ImageView newView = createImageView(capturedAnimal, view.getImage());
+				if (toPlayer == Player.PLAYER1) {
+					newView.setTranslateX(30);
+					newView.setTranslateY(gridHeight - (UNIT_SIZE * gameBoard.getPlayer1hand().size()));
+					rightPane.getChildren().add(newView);
+				} else {
+					newView.setTranslateX(30);
+					newView.setTranslateY(UNIT_SIZE * (gameBoard.getPlayer2hand().size() - 1));
+					leftPane.getChildren().add(newView);
+				}
+			}
+		});
 		translateTransition.play();
-		
+
 		RotateTransition rotateTransition = new RotateTransition();
 		rotateTransition.setNode(view);
 		rotateTransition.setDuration(Duration.millis(0_500L));
 		rotateTransition.setToAngle(720);
 		rotateTransition.play();
 	}
-	
+
 	private void doPlayer2() {
-		
-		try {Thread.sleep(500);} catch (InterruptedException e) {}
-		
+
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+
 		MoveAction moveAction = think();
 		doMove(moveAction);
 	}
 
 	private MoveAction think() {
-        KieSession kSession = kContainer.newKieSession("ksession_algorithm");
-        
-        kSession.setGlobal("nextMove", null);
-        
-        kSession.insert(gameBoard);
-        List<Animal> animals = gameBoard.getAllAnimals();
-        for (Animal ani: animals) {
-        	kSession.insert(ani);
-        }
-        kSession.fireAllRules();
-        
-        MoveAction nextMove = (MoveAction)kSession.getGlobal("nextMove");
-        
-        kSession.dispose();
-        
-        return nextMove;
+		KieSession kSession = kContainer.newKieSession("ksession_algorithm");
+
+		kSession.setGlobal("nextMove", null);
+
+		kSession.insert(gameBoard);
+		List<Animal> animals = gameBoard.getAllAnimals();
+		for (Animal ani : animals) {
+			kSession.insert(ani);
+		}
+		kSession.fireAllRules();
+
+		MoveAction nextMove = (MoveAction) kSession.getGlobal("nextMove");
+
+		kSession.dispose();
+
+		return nextMove;
 	}
-	
+
 	private void doMove(MoveAction moveAction) {
 		Boolean isValid = new Boolean(false);
 		List<Action> resultList = new ArrayList<Action>();
-		
-        KieSession kSession = kContainer.newKieSession("ksession_rules_of_game");
 
-        kSession.setGlobal("isValid", isValid);
-        kSession.setGlobal("resultList", resultList);
-        
-        kSession.insert(gameBoard);
-        List<Animal> animals = gameBoard.getAllAnimals();
-        for (Animal ani: animals) {
-        	kSession.insert(ani);
-        }
-        kSession.insert(moveAction);
-        kSession.fireAllRules();
-        
-        isValid = (Boolean)kSession.getGlobal("isValid");
-        
-        kSession.dispose();
-        
-        // doesn't meet the moving rules
-        if (!isValid) {
-    		throw new RuntimeException("PLAYER2 should not choose an invalid move");
-        }
-		
-        // execute the moving action
-        gameBoard.update(moveAction);
-        
-        ImageView view = moveAction.getAnimal().getView();
-        
+		KieSession kSession = kContainer.newKieSession("ksession_rules_of_game");
+
+		kSession.setGlobal("isValid", isValid);
+		kSession.setGlobal("resultList", resultList);
+
+		kSession.insert(gameBoard);
+		List<Animal> animals = gameBoard.getAllAnimals();
+		for (Animal ani : animals) {
+			kSession.insert(ani);
+		}
+		kSession.insert(moveAction);
+		kSession.fireAllRules();
+
+		isValid = (Boolean) kSession.getGlobal("isValid");
+
+		kSession.dispose();
+
+		// doesn't meet the moving rules
+		if (!isValid) {
+			throw new RuntimeException("PLAYER2 should not choose an invalid move");
+		}
+
+		// execute the moving action
+		gameBoard.update(moveAction);
+		System.out.println("========");
+
+		ImageView view = moveAction.getAnimal().getView();
+		System.out.println(view);
+
 		gridPane.getChildren().remove(view);
 		gridPane.add(view, moveAction.getNewCol(), moveAction.getNewRow());
-        
-        // Any result action (win / capture an animal / grow to a hen)
-        for (Action resultAction : resultList) {
-        	System.out.println(resultAction);
-        	if (resultAction instanceof WinAction) {
-        		// TODO:
-        	} else if (resultAction instanceof CaptureAction) {
-        		Animal capturedAnimal = ((CaptureAction)resultAction).getAnimal();
-        		spinView(capturedAnimal, moveAction.getAnimal().getPlayer());
-        	} else if (resultAction instanceof HenAction) {
-        		// TODO:
-        	}
+
+		// Any result action (win / capture an animal / promote to a hen)
+		for (Action resultAction : resultList) {
+			System.out.println(resultAction);
+			if (resultAction instanceof WinAction) {
+				// TODO:
+			} else if (resultAction instanceof CaptureAction) {
+				System.out.println("=====");
+				Animal capturedAnimal = ((CaptureAction) resultAction).getAnimal();
+				spinView(capturedAnimal, moveAction.getAnimal().getPlayer());
+			} else if (resultAction instanceof HenAction) {
+				// TODO:
+			}
 		}
 
 		gamePhase = GamePhase.PLAYER1;

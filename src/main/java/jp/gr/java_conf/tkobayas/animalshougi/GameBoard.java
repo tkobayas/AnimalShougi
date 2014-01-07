@@ -7,18 +7,18 @@ import jp.gr.java_conf.tkobayas.animalshougi.action.MoveAction;
 import jp.gr.java_conf.tkobayas.animalshougi.animal.Animal;
 
 public class GameBoard {
-	
+
 	private Animal[][] grid;
-	
+
 	private List<Animal> player1hand;
 	private List<Animal> player2hand;
-	
+
 	public GameBoard() {
 		grid = new Animal[3][4];
 		player1hand = new ArrayList<Animal>();
 		player2hand = new ArrayList<Animal>();
 	}
-	
+
 	public Animal[][] getGrid() {
 		return grid;
 	}
@@ -46,7 +46,7 @@ public class GameBoard {
 	public void addAnimal(Animal animal) {
 		grid[animal.getCol()][animal.getRow()] = animal;
 	}
-	
+
 	public List<Animal> getAllAnimals() {
 		List<Animal> animals = new ArrayList<Animal>();
 		for (int i = 0; i < 3; i++) {
@@ -58,10 +58,10 @@ public class GameBoard {
 		}
 		animals.addAll(player1hand);
 		animals.addAll(player2hand);
-		
+
 		return animals;
 	}
-	
+
 	public Animal getAnimal(int col, int row) {
 		return grid[col][row];
 	}
@@ -69,12 +69,24 @@ public class GameBoard {
 	public void update(MoveAction action) {
 		Animal animal = action.getAnimal();
 
-		grid[animal.getCol()][animal.getRow()] = null;
+		if (animal.getCol() == -1 && animal.getRow() == -1) {
+			if (animal.getPlayer() == Player.PLAYER1) {
+				player1hand.remove(animal);
+			} else {
+				player2hand.remove(animal);
+			}
+		} else {
+			grid[animal.getCol()][animal.getRow()] = null;
+		}
+		
 		animal.setCol(action.getNewCol());
 		animal.setRow(action.getNewRow());
 		grid[animal.getCol()][animal.getRow()] = animal;
+
+		System.out
+				.println("update -> col = " + animal.getCol() + ", row = " + animal.getRow() + ", animal = " + animal);
 	}
-	
+
 	public boolean containsFriend(Player player, int col, int row) {
 		Animal animal = grid[col][row];
 		if (animal != null && animal.getPlayer() == player) {
@@ -83,23 +95,24 @@ public class GameBoard {
 			return false;
 		}
 	}
-	
+
 	public boolean containsFoe(Player player, int col, int row) {
 		Animal animal = grid[col][row];
+		System.out.println("containsFoe -> col = " + col + ", row = " + row + ", animal = " + animal);
 		if (animal != null && animal.getPlayer() != player) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	public void captureAnimal(Animal capturedAnimal, Player toPlayer) {
-		grid[capturedAnimal.getCol()][capturedAnimal.getRow()] = null;
-		
+		// grid[capturedAnimal.getCol()][capturedAnimal.getRow()] = null;
+
 		capturedAnimal.setCol(-1);
 		capturedAnimal.setRow(-1);
 		capturedAnimal.setPlayer(toPlayer);
-		
+
 		if (toPlayer == Player.PLAYER1) {
 			player1hand.add(capturedAnimal);
 		} else {
